@@ -1,10 +1,10 @@
 ### Live Demo
 
-[Githr Dashboard - Vercel](https://githr.vercel.app/)
+[Creator Dashboard - Vercel](https://Creator.vercel.app/)
 
 ### Preview
 
-![Githr - Dashboard UI](public/preview.png)
+![Creator - Dashboard UI](public/preview.png)
 
 ## Star History
 

@@ -1,0 +1,320 @@
+"use client";
+
+import React, { useState } from "react";
+import {
+  Profile2User,
+  MoneySend,
+  ShoppingBag,
+  ReceiptEdit,
+  Timer1,
+  UserTick,
+  Activity,
+  TrendUp,
+  ChartSquare,
+} from "iconsax-react";
+
+import {
+  LineChart,
+  Line,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  CartesianGrid,
+  Area,
+  AreaChart,
+  PieChart,
+  Pie,
+  Cell,
+  Legend,
+} from "recharts";
+import HistogramChart from "@/components/charts/HistogramChart";
+// ---------------- EXISTING DATA ----------------
+const salesData = [
+  { month: "Jan", sales: 4000 },
+  { month: "Feb", sales: 3000 },
+  { month: "Mar", sales: 5000 },
+  { month: "Apr", sales: 4200 },
+  { month: "May", sales: 6100 },
+  { month: "Jun", sales: 7000 },
+];
+
+const userGrowthData = [
+  { month: "Jan", users: 800 },
+  { month: "Feb", users: 1200 },
+  { month: "Mar", users: 1600 },
+  { month: "Apr", users: 2100 },
+  { month: "May", users: 2600 },
+  { month: "Jun", users: 2900 },
+];
+
+const revenueAreaData = [
+  { name: "Mon", revenue: 1200 },
+  { name: "Tue", revenue: 1800 },
+  { name: "Wed", revenue: 1500 },
+  { name: "Thu", revenue: 2100 },
+  { name: "Fri", revenue: 2300 },
+  { name: "Sat", revenue: 3100 },
+  { name: "Sun", revenue: 2800 },
+];
+
+const ordersPieData = [
+  { name: "Completed", value: 50 },
+  { name: "Pending", value: 30 },
+  { name: "Requested", value: 20 },
+];
+
+const COLORS = ["#22c55e", "#f97316", "#ef4444"];
+
+const multiLineData = [
+  { name: "Jan", visitors: 1200, orders: 450, conversion: 120 },
+  { name: "Feb", visitors: 2200, orders: 680, conversion: 190 },
+  { name: "Mar", visitors: 3200, orders: 880, conversion: 260 },
+  { name: "Apr", visitors: 2800, orders: 760, conversion: 210 },
+  { name: "May", visitors: 4000, orders: 1200, conversion: 410 },
+];
+
+const signupData = [
+  { month: "Jan", creators: 200, sellers: 120, buyers: 400 },
+  { month: "Feb", creators: 320, sellers: 210, buyers: 580 },
+  { month: "Mar", creators: 420, sellers: 310, buyers: 750 },
+  { month: "Apr", creators: 500, sellers: 380, buyers: 820 },
+];
+
+// ---------------- NEW DATA ----------------
+
+// 1️⃣ Which creator gets highest follower contribution
+const followerContribution = [
+  { name: "Creator A", followers: 54000 },
+  { name: "Creator B", followers: 32000 },
+  { name: "Creator C", followers: 27000 },
+  { name: "Creator D", followers: 19000 },
+];
+
+// 2️⃣ Which age group watches which product more
+const ageProductInterest = [
+  { age: "18-24", tshirt: 800, shoes: 450, saree: 300 },
+  { age: "25-34", tshirt: 1200, shoes: 850, saree: 600 },
+  { age: "35-44", tshirt: 600, shoes: 700, saree: 900 },
+  { age: "45+", tshirt: 200, shoes: 260, saree: 500 },
+];
+
+// 3️⃣ Which product gets the maximum views
+const productViewData = [
+  { product: "Saree", views: 5200 },
+  { product: "T-Shirt", views: 6800 },
+  { product: "Shoes", views: 4300 },
+  { product: "Kurti", views: 7700 },
+  { product: "Makeup Kit", views: 8900 },
+];
+
+// --------------------------------------------------------------
+
+export default function AdminDashboard() {
+  const [activeFilter, setActiveFilter] = useState("Monthly");
+
+  const filters = ["Today", "Weekly", "Monthly", "Yearly"];
+
+  const stats = [
+    {
+      label: "Total Creators",
+      value: 1280,
+      icon: <Profile2User size={26} />,
+      color: "bg-blue-100 text-blue-600",
+    },
+    {
+      label: "Total Sellers",
+      value: 620,
+      icon: <UserTick size={26} />,
+      color: "bg-purple-100 text-purple-600",
+    },
+    {
+      label: "Total Sale Revenue",
+      value: "₹12,45,000",
+      icon: <MoneySend size={26} />,
+      color: "bg-green-100 text-green-600",
+    },
+    {
+      label: "Requested Orders",
+      value: 210,
+      icon: <ReceiptEdit size={26} />,
+      color: "bg-orange-100 text-orange-600",
+    },
+    {
+      label: "Pending Orders",
+      value: 89,
+      icon: <Timer1 size={26} />,
+      color: "bg-red-100 text-red-600",
+    },
+    {
+      label: "Total Buyers",
+      value: 4500,
+      icon: <ShoppingBag size={26} />,
+      color: "bg-amber-100 text-amber-600",
+    },
+  ];
+
+  const analytics = [
+    {
+      label: "Conversion Rate",
+      value: "4.2%",
+      icon: <Activity size={22} />,
+      color: "bg-teal-100 text-teal-600",
+    },
+    {
+      label: "Avg Order Value",
+      value: "₹850",
+      icon: <ChartSquare size={22} />,
+      color: "bg-indigo-100 text-indigo-600",
+    },
+    {
+      label: "Growth",
+      value: "+12.5%",
+      icon: <TrendUp size={22} />,
+      color: "bg-green-100 text-green-600",
+    },
+  ];
+
+  return (
+    <div className="p-6 space-y-8 min-h-screen bg-gray-50">
+
+      {/* HEADER */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-semibold text-gray-800">Admin Dashboard</h1>
+          <p className="text-gray-500 mt-1">Overview of entire platform activity</p>
+        </div>
+
+        <div className="flex items-center gap-2 bg-white shadow-sm px-3 py-2 rounded-xl border">
+          {filters.map((f) => (
+            <button
+              key={f}
+              onClick={() => setActiveFilter(f)}
+              className={`px-3 py-1 rounded-lg text-sm font-medium ${
+                activeFilter === f
+                  ? "bg-black text-white"
+                  : "text-gray-600 hover:bg-gray-100"
+              }`}
+            >
+              {f}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* STATS */}
+      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {stats.map((item, index) => (
+          <div key={index} className="bg-white p-6 rounded-2xl shadow-sm border">
+            <div className={`h-12 w-12 rounded-xl flex items-center justify-center ${item.color}`}>
+              {item.icon}
+            </div>
+            <h3 className="mt-4 text-sm text-gray-500">{item.label}</h3>
+            <p className="text-2xl font-bold text-gray-800 mt-1">{item.value}</p>
+          </div>
+        ))}
+      </div>
+
+      {/* ANALYTICS */}
+      <div className="grid sm:grid-cols-3 gap-6">
+        {analytics.map((a, i) => (
+          <div key={i} className="bg-white p-5 rounded-2xl shadow-sm border">
+            <div className={`h-10 w-10 rounded-lg flex items-center justify-center ${a.color}`}>
+              {a.icon}
+            </div>
+            <h4 className="mt-3 text-gray-500 text-sm">{a.label}</h4>
+            <p className="text-xl font-semibold text-gray-800">{a.value}</p>
+          </div>
+        ))}
+      </div>
+
+      {/* ------------------ EXISTING CHARTS ------------------- */}
+      {/* (Same code as before, not removing anything — just continuing below) */}
+
+      <div className="grid lg:grid-cols-2 gap-6">
+        {/* Sales Line Chart */}
+        <div className="bg-white p-6 rounded-2xl border h-90 mb-3">
+          <h3 className="font-semibold text-gray-700 mb-3">Sales Overview</h3>
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={salesData}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="month" />
+              <YAxis />
+              <Tooltip />
+              <Line type="monotone" dataKey="sales" stroke="#2563eb" strokeWidth={3} />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+
+        {/* User Growth */}
+        <div className="bg-white p-6 rounded-2xl border h-72">
+          <h3 className="font-semibold text-gray-700 mb-3">User Growth</h3>
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={userGrowthData}>
+              <XAxis dataKey="month" />
+              <YAxis />
+              <Tooltip />
+              <Bar dataKey="users" fill="#10b981" radius={[10, 10, 0, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      {/* ------------------- NEW ANALYTICS SECTION -------------------- */}
+
+      <div className="grid lg:grid-cols-2 gap-6 mt-6">
+
+        {/* 1️⃣ Follower Contribution Pie */}
+        <div className="bg-white p-6 rounded-2xl border h-80">
+          <h3 className="font-semibold text-gray-700 mb-3">Creator Follower Contribution</h3>
+          <ResponsiveContainer width="100%" height="100%">
+            <PieChart>
+              <Pie data={followerContribution} dataKey="followers" nameKey="name" outerRadius={90} label>
+                {followerContribution.map((_, i) => (
+                  <Cell key={i} fill={["#2563eb", "#10b981", "#f97316", "#a855f7"][i]} />
+                ))}
+              </Pie>
+              <Legend />
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
+
+        {/* 2️⃣ Age Group vs Product Interest */}
+        <div className="bg-white p-6 rounded-2xl border h-80">
+          <h3 className="font-semibold text-gray-700 mb-3">Age Group Product Interest</h3>
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={ageProductInterest}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="age" />
+              <YAxis />
+              <Tooltip />
+              <Bar dataKey="tshirt" fill="#2563eb" />
+              <Bar dataKey="shoes" fill="#10b981" />
+              <Bar dataKey="saree" fill="#f43f5e" />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+
+        {/* 3️⃣ Product Views Line */}
+        <div className="bg-white p-6 rounded-2xl border h-80">
+          <h3 className="font-semibold text-gray-700 mb-3">Most Viewed Products</h3>
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={productViewData}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="product" />
+              <YAxis />
+              <Tooltip />
+              <Line type="monotone" dataKey="views" stroke="#7c3aed" strokeWidth={3} />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+        <HistogramChart />
+
+      
+      </div>
+
+    </div>
+  );
+}

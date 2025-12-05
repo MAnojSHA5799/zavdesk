@@ -1,152 +1,191 @@
-"use client"
+"use client";
 
-import Image from 'next/image'
-import { ArrowRight2, Calendar, Document, Element3, Folder2, Headphone, Profile2User, Setting2, Setting4, Star, Timer1, Triangle } from 'iconsax-react'
-import ProfileImage from '../components/assets/profile.png'
-import Link, { LinkProps } from 'next/link'
-import { usePathname } from 'next/navigation'
-import { useCentralStore } from '@/Store'
-import React, { useEffect } from 'react'
+import Image from "next/image";
+import {
+  ArrowRight2,
+  Document,
+  Element3,
+  Folder2,
+  Headphone,
+  Link2,
+  Profile2User,
+  Setting2,
+  Star,
+  Wallet,
+  Chart1,
+  Triangle,
+} from "iconsax-react";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import ProfileImg from "./assets/profile.png";
+import React, { useEffect, useState } from "react";
 
+interface MenuItem {
+  label: string;
+  href?: string;
+  icon?: React.ReactNode;
+  children?: { label: string; href: string }[];
+}
 
-function Sidebar() {
+export default function Sidebar() {
+  const pathname = usePathname();
+  const router = useRouter();
 
-    const pathname = usePathname()
-    const { setIsSidebarOpen, isSidebarOpen } = useCentralStore()
+  const [role, setRole] = useState<"creator" | "admin">("creator");
+  const [openMenu, setOpenMenu] = useState<string | null>(null); // dropdown open
 
-    // useEffect(() => {
-    //     if (!isSidebarOpen) setIsSidebarOpen(!isSidebarOpen)
-    // }, [pathname])
+  useEffect(() => {
+    const r = localStorage.getItem("user_role") as "creator" | "admin";
+    if (r) setRole(r);
+  }, []);
 
-    return (
-        <div className='w-60 shrink-0 md:block h-screen sticky top-0 overflow-hidden'>
-            <div className='w-full h-full bg-white border-r'>
-                {/* logo */}
-                <div className='h-[var(--h-nav)] p-4 md:p-6 flex cursor-pointer group items-center gap-2'>
-                    <div className='h-10 outline outline-violet-300 w-10 flex items-center bg-gradient-to-br justify-center rounded-full from-violet-500 to-violet-400 text-white'>
-                        <Triangle size={24} className='relative group-hover:scale-75 duration-200' />
-                    </div>
-                    <div>
-                        <h1 className='text-sm font-bold text-gray-800'>Githr</h1>
-                        <p className='text-xs text-gray-500 font-medium'>HR Management</p>
-                    </div>
-                </div>
+  const logout = () => {
+    localStorage.removeItem("user_role");
+    router.push("/login");
+  };
 
-                {/* section divider */}
-                <hr className='bg-gray-400 mx-2' />
+  // ---------------------- CREATOR MENU ----------------------
+  const creatorMenu: MenuItem[] = [
+    { href: "/app/dashboard", label: "Dashboard", icon: <Element3 size={16} /> },
+    { href: "/app/teams", label: "Creator Details", icon: <Profile2User size={16} /> },
+    { href: "/app/links", label: "Create Links", icon: <Link2 size={16} /> },
+    { href: "/app/earnings", label: "Earnings", icon: <Star size={16} /> },
+    { href: "/app/orders", label: "Orders", icon: <Document size={16} /> },
+    { href: "/app/products", label: "Products", icon: <Folder2 size={16} /> },
+    { href: "/app/payouts", label: "Payouts", icon: <Wallet size={16} /> },
+    { href: "/app/ai-analysis", label: "AI Analysis", icon: <Chart1 size={16} /> },
+  ];
 
-                {/* other section */}
-                <div className='flex flex-col h-full justify-between'>
-                    {/* top */}
-                    <div className='pt-6 text-gray-500 font-medium space-y-2 md:px-2 text-xs'>
-                        <Link href={'/app/dashboard'} className={`flex ${pathname === '/app/dashboard' ? 'text-primary' : ''} hover:px-8 duration-200 px-6 py-2 items-center gap-2`}>
-                            <Element3 variant='Outline' size={16} />
-                            Dashboard
-                        </Link>
+  // ---------------------- ADMIN MENU ----------------------
+  const adminMenu: MenuItem[] = [
+    { label: "Dashboard", href: "/admin/dashboard", icon: <Element3 size={16} /> },
 
-                        <Link href={'/app/teams'} className={`flex ${pathname === '/app/teams' ? 'text-primary' : ''} hover:px-8 duration-200 px-6 py-2 items-center gap-2`}>
-                            <Profile2User size={16} />
-                            Teams
-                        </Link>
+    {
+      label: "Creators",
+      icon: <Profile2User size={16} />,
+      children: [
+        { label: "All Creators", href: "/admin/creators" },
+        { label: "Creator Requests", href: "/admin/creators/requests" },
+      ],
+    },
 
-                        <Link href={'/app/integrations'} className={`flex ${pathname === '/app/integrations' ? 'text-primary' : ''} hover:px-8 duration-200 px-6 py-2 items-center gap-2`}>
-                            <Setting4 size={16} />
-                            Integrations
-                        </Link>
+    {
+      label: "Sellers",
+      icon: <Folder2 size={16} />,
+      children: [
+        { label: "All Sellers", href: "/admin/sellers" },
+        { label: "Seller Requests", href: "/admin/sellers/requests" },
+      ],
+    },
 
-                        <button disabled className={`flex ${pathname === '/app/calendar' ? 'text-primary' : ''} hover:px-8 disabled:opacity-60 duration-200 px-6 py-2 items-center gap-2`}>
-                            <Calendar size={16} />
-                            Calendar
-                        </button>
+    {
+      label: "Customers",
+      icon: <Profile2User size={16} />,
+      children: [
+        { label: "All Customers", href: "/admin/customers" },
+        { label: "Customer Requests", href: "/admin/customers/requests" },
+      ],
+    },
 
-                        <button disabled className={`flex ${pathname === '/app/timeoff' ? 'text-primary' : ''} hover:px-8 disabled:opacity-60 duration-200 px-6 py-2 items-center gap-2`}>
-                            <Timer1 size={16} />
-                            Time Off
-                        </button>
+    { label: "Orders", href: "/admin/orders", icon: <Document size={16} /> },
+    { label: "Payments", href: "/admin/payments", icon: <Wallet size={16} /> },
+    { label: "Products", href: "/admin/products", icon: <Folder2 size={16} /> },
+    { label: "Support", href: "/admin/support", icon: <Headphone size={16} /> },
+  ];
 
-                        <button disabled className={`flex ${pathname === '/app/projects' ? 'text-primary' : ''} hover:px-8 disabled:opacity-60 duration-200 px-6 py-2 items-center gap-2`}>
-                            <Folder2 size={16} />
-                            Projects
-                        </button>
+  const menu = role === "admin" ? adminMenu : creatorMenu;
 
-                        <button disabled className={`flex ${pathname === '/app/benefits' ? 'text-primary' : ''} hover:px-8 disabled:opacity-60 duration-200 px-6 py-2 items-center gap-2`}>
-                            <Star size={16} />
-                            Benefits
-                        </button>
-
-                        <button disabled className={`flex ${pathname === '/app/documents' ? 'text-primary' : ''} hover:px-8 disabled:opacity-60 duration-200 px-6 py-2 items-center gap-2`}>
-                            <Document size={16} />
-                            Documents
-                        </button>
-                    </div>
-
-                    <div>
-                        <div className='text-gray-500 text-xs font-medium md:px-2'>
-                            <button className={`flex ${pathname === '/app/settings' ? 'text-primary' : ''} hover:px-8 duration-200 px-6 py-2 items-center gap-2`}>
-                                <Setting2 size={16} />
-                                Settings
-                            </button>
-
-                            <button className={`flex ${pathname === '/app/support' ? 'text-primary' : ''} hover:px-8 duration-200 px-6 py-2 items-center gap-2`}>
-                                <Headphone size={16} />
-                                Support
-                            </button>
-                        </div>
-
-                        <hr className='bg-gray-400 mx-2 my-4' />
-
-                        {/* bottom */}
-                        <div className='flex pb-28 justify-between px-4 md:px-6 items-center cursor-pointer hover:pr-5 duration-200'>
-                            <div className='flex items-center gap-2'>
-                                <Image
-                                    src={ProfileImage}
-                                    alt='User'
-                                    width={36}
-                                    height={36}
-                                    className='rounded-full'
-                                />
-                                <div className=''>
-                                    <p className='text-sm font-semibold text-gray-800'>Steve Jobs</p>
-                                    <p className='text-xs font-medium text-gray-500'>steve@apple.com</p>
-                                </div>
-                            </div>
-
-                            <button className='text-gray-500'>
-                                <ArrowRight2 size={16} />
-                            </button>
-                        </div>
-                    </div>
-
-                </div>
-
-            </div>
+  return (
+    <div className="w-60 shrink-0 h-screen border-r bg-white">
+      {/* TOP BRAND */}
+      <div className="h-[70px] p-6 flex items-center gap-2">
+        <div className="h-10 w-10 flex items-center justify-center rounded-full bg-violet-500 text-white">
+          <Triangle size={20} />
         </div>
-    )
+        <div>
+          <h1 className="text-sm font-bold text-gray-800 capitalize">{role}</h1>
+          <p className="text-xs text-gray-500">HeyCollab</p>
+        </div>
+      </div>
+
+      <hr />
+
+      <div className="flex flex-col justify-between h-full">
+        {/* MENU SECTION */}
+        <div className="pt-6 text-gray-600 text-xs font-medium space-y-2">
+          {menu.map((item, index) => {
+            const isOpen = openMenu === item.label;
+
+            return (
+              <React.Fragment key={index}>
+                {/* PARENT ITEM */}
+                <button
+                  onClick={() =>
+                    item.children ? setOpenMenu(isOpen ? null : item.label) : router.push(item.href!)
+                  }
+                  className={`flex w-full items-center gap-2 px-6 py-2 duration-200 hover:px-8 ${
+                    pathname === item.href ? "text-violet-600 font-semibold" : ""
+                  }`}
+                >
+                  {item.icon}
+                  {item.label}
+
+                  {item.children && (
+                    <span className="ml-auto">{isOpen ? "▾" : "▸"}</span>
+                  )}
+                </button>
+
+                {/* DROPDOWN ITEMS */}
+                {item.children && isOpen && (
+                  <div className="ml-10 space-y-1">
+                    {item.children.map((sub, i) => (
+                      <Link
+                        key={i}
+                        href={sub.href}
+                        className={`block text-xs py-1 px-2 rounded hover:bg-violet-50 ${
+                          pathname === sub.href ? "text-violet-600 font-semibold" : ""
+                        }`}
+                      >
+                        {sub.label}
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </React.Fragment>
+            );
+          })}
+        </div>
+
+        {/* BOTTOM PROFILE SECTION */}
+        <div>
+          <div className="text-gray-500 text-xs font-medium">
+            <button className="flex px-6 py-2 items-center gap-2 hover:px-8 duration-200">
+              <Setting2 size={16} /> Settings
+            </button>
+
+            <button className="flex px-6 py-2 items-center gap-2 hover:px-8 duration-200">
+              <Headphone size={16} /> Support
+            </button>
+          </div>
+
+          <hr className="my-4" />
+
+          <div className="flex justify-between px-6 pb-6 items-center">
+            <div className="flex items-center gap-2">
+              <Image src={ProfileImg} alt="User" width={36} height={36} className="rounded-full" />
+
+              <div>
+                <p className="text-sm font-semibold text-gray-800">Manoj</p>
+                <p className="text-xs text-gray-500">steve@apple.com</p>
+              </div>
+            </div>
+
+            <button onClick={logout} className="text-gray-500 hover:text-red-500">
+              <ArrowRight2 size={18} />
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }
-
-
-const NavbarLink = ({ href, active }: { href: string, active: boolean }) => {
-    return (
-        <Link
-            href={href}
-
-        >
-
-        </Link>
-    )
-}
-
-const NavLink = React.forwardRef<
-    LinkProps,
-    React.ComponentPropsWithoutRef<'a'>>
-    (({ className, href, ...props }) =>
-        <Link
-            href={href!}
-            className={`flex ${window.location.pathname === href! ? 'text-primary' : ''} hover:px-8 duration-200 rounded-md w-full py-2 px-6 items-center gap-2`}
-            {...props}
-        />
-    )
-NavLink.displayName = 'NavLink'
-
-
-export default Sidebar

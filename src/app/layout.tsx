@@ -5,9 +5,9 @@ import './globals.css'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: "Githr - Dashboard",
-  description: "Githr - Dashboard",
-  keywords: "Githr - Dashboard, dashboard ui",
+  title: "Creator - Dashboard",
+  description: "Creator - Dashboard",
+  keywords: "Creator - Dashboard, dashboard ui",
 }
 
 export default function RootLayout({
